@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">麦富棉 | 三维动态设计师简历</title>
+    
+    <script>
+        window.tailwind = {
+            config: {
+                safelist: [
+                    { pattern: /bg-(blue|indigo|purple|cyan|pink|slate)-(400|500|600|800|900)/ },
+                    { pattern: /text-(blue|indigo|purple|cyan|pink|slate)-(300|400|500)/ },
+                    { pattern: /border-(blue|indigo|purple|cyan|pink|slate)-(400|500|600)/, variants: ['hover', 'group-hover'] },
+                    { pattern: /shadow-(blue|indigo|purple|cyan|pink|slate)-(400|500|600)/, variants: ['hover', 'group-hover'] },
+                    { pattern: /(from|to|via)-(blue|indigo|purple|cyan|pink|slate)-(400|500|600)/, variants: ['hover', 'group-hover'] }
+                ]
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #030305; 
+            color: #e2e8f0; 
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 鼠标指针样式 */
+        * { cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300f0ff' /%3E%3Cstop offset='100%25' stop-color='%238a2be2' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 2 2 L 8 26 L 13 16 L 24 14 Z' fill='url(%23g)' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M 13 16 L 22 25' stroke='%2300f0ff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 2 2, auto !important; }
+        a, button, .interactive-element, .zoomable-image, video, input, select, textarea { cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff007f' /%3E%3Cstop offset='100%25' stop-color='%238a2be2' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M 2 2 L 8 26 L 13 16 L 24 14 Z' fill='url(%23g2)' stroke='%23ffffff' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='13' cy='16' r='3' fill='%23ff007f' stroke='%23ffffff' stroke-width='1.5'/%3E%3C/svg%3E") 2 2, pointer !important; }
+
+        .logo-gradient { background: linear-gradient(to right, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 100; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        
+        .bg-grid { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-size: 60px 60px; background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px); mask-image: radial-gradient(circle at center, black 40%, transparent 90%); -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 90%); }
+
+        .glass-card { background: linear-gradient(145deg, rgba(20, 20, 28, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(255, 255, 255, 0.08); border-left: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7); }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        @keyframes smoothReveal { 
+            0% { opacity: 0; transform: translateY(25px); filter: blur(4px); } 
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); } 
+        }
+        .animate-hero-text { 
+            animation: smoothReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            opacity: 0; 
+            will-change: transform, opacity, filter;
+        }
+
+        @keyframes float-hero { 
+            0%, 100% { transform: translateY(0px) rotate(0deg); } 
+            25% { transform: translateY(-12px) rotate(1deg); }
+            50% { transform: translateY(-20px) rotate(0deg); } 
+            75% { transform: translateY(-12px) rotate(-1deg); }
+        }
+        .animate-float-hero { animation: float-hero 7s ease-in-out infinite; transform-origin: center bottom; }
+        
+        .cursor-grab { cursor: grab !important; }
+        .cursor-grabbing { cursor: grabbing !important; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased selection:bg-purple-500/30 selection:text-purple-200">
+
+    <div class="noise-overlay"></div>
+    <div class="bg-grid"></div>
+    <canvas id="starfield" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-80"></canvas>
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-transparent border-b border-transparent py-4" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-14">
+                <div id="nav-logo" class="flex-shrink-0 font-black text-2xl tracking-tighter interactive-element"></div>
+                <div class="hidden md:block">
+                    <div id="nav-links" class="ml-10 flex items-baseline space-x-1 font-medium text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主视觉 -->
+    <section id="hero" class="relative overflow-hidden pt-32 pb-16 min-h-screen flex flex-col justify-center z-10">
+        <div class="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full filter blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
+            <div class="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-16 mb-24">
+                <div class="lg:w-[45%] text-left flex flex-col pt-8">
+                    <div id="hero-tagline" class="inline-flex items-center w-max mb-10 px-4 py-1.5 rounded-full border border-white/5 bg-[#0a0a0f] text-slate-300 text-[11px] font-bold tracking-widest uppercase shadow-lg animate-hero-text" style="animation-delay: 0.1s;"></div>
+                    <div id="hero-title" class="mb-8 flex flex-col gap-2"></div>
+                    <div id="hero-subtitle" class="mb-10 text-lg md:text-xl text-slate-300 font-medium tracking-wide animate-hero-text" style="animation-delay: 0.4s;"></div>
+                    <p id="hero-desc" class="max-w-xl text-slate-400 mb-14 text-sm md:text-base leading-relaxed font-light animate-hero-text" style="animation-delay: 0.5s;"></p>
+                    <div id="hero-contact" class="flex flex-wrap items-center gap-4 text-slate-400 text-xs font-mono animate-hero-text" style="animation-delay: 0.6s;"></div>
+                </div>
+                <div class="lg:w-[55%] flex justify-center lg:justify-end items-center relative h-[380px] md:h-[550px] lg:h-[650px] w-full animate-hero-text" style="animation-delay: 0.4s;">
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 md:w-[400px] md:h-[400px] bg-gradient-to-tr from-indigo-500/15 to-purple-500/15 rounded-full filter blur-[60px] pointer-events-none"></div>
+                    <div class="relative z-10 w-full h-full flex items-center justify-center animate-float-hero">
+                        <img id="hero-ip-img" src="" alt="个人配图" class="w-auto h-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-transform duration-500 ease-out interactive-element hover:scale-105">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 轮播图板块 -->
+            <div class="relative w-full glass-card rounded-3xl p-6 md:p-10 overflow-hidden reveal active">
+                <div class="absolute -top-10 -left-10 opacity-[0.02] pointer-events-none font-black text-9xl tracking-tighter text-white select-none whitespace-nowrap">FEATURED WORK</div>
+                <div class="flex flex-col md:flex-row gap-10 items-center h-auto md:h-[400px]">
+                    <div class="w-full md:w-5/12 flex flex-col justify-center relative z-20 min-h-[220px]">
+                        <div id="carousel-text" class="transition-all duration-700 ease-out opacity-100 transform translate-y-0">
+                            <div id="c-tags" class="flex flex-wrap gap-2 mb-5"></div>
+                            <h3 id="c-title" class="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight drop-shadow-md"></h3>
+                            <p id="c-desc" class="text-slate-400 text-sm md:text-base leading-relaxed mb-8 line-clamp-3 font-light"></p>
+                            <a id="c-link" href="#" class="interactive-element group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-xl bg-[#111118] border border-white/5 text-white text-sm font-bold transition-all w-max overflow-hidden hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                                <span class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out z-0"></span>
+                                <i data-lucide="arrow-right-circle" class="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform"></i> 
+                                <span class="relative z-10">探索案例</span>
+                            </a>
+                        </div>
+                        <div class="flex gap-3 mt-10" id="carousel-dots"></div>
+                    </div>
+                    <!-- 轮播内容容器 -->
+                    <div class="w-full md:w-7/12 h-[280px] md:h-full relative rounded-2xl overflow-hidden shadow-2xl border border-white/5 interactive-element hover:scale-[1.01] hover:border-white/20 transition-all duration-500 bg-[#08080c]" id="carousel-stage"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 个人总结 -->
+    <section id="profile" class="py-24 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4 mb-16 reveal">
+                <div class="w-2 h-8 bg-indigo-500 rounded-full shadow-[0_0_15px_rgba(99,102,241,0.8)]"></div>
+                <h2 id="profile-title" class="text-3xl md:text-4xl font-black text-white tracking-tight"></h2>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div id="profile-list" class="space-y-6 text-slate-300 text-base md:text-lg leading-relaxed font-light z-20"></div>
+                <div class="reveal reveal-delay-2 relative w-full aspect-square md:aspect-[4/3] rounded-3xl glass-card overflow-hidden bg-[#050508]/50 flex items-center justify-center">
+                    <canvas id="network-lines" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
+                    <div class="absolute bottom-6 w-full text-center pointer-events-none z-0">
+                        <span class="text-xs tracking-[0.3em] text-indigo-500/50 font-bold drop-shadow-md">NEURAL SKILL NETWORK</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 项目展示大板块 -->
+    <section id="projects" class="py-24 relative z-10 bg-[#050508]/20 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center gap-6 mb-24 reveal">
+                <div class="h-px w-24 bg-gradient-to-r from-transparent to-indigo-500/50"></div>
+                <h2 id="projects-main-title" class="text-4xl md:text-5xl font-black text-white tracking-widest uppercase drop-shadow-lg"></h2>
+                <div class="h-px w-24 bg-gradient-to-l from-transparent to-indigo-500/50"></div>
+            </div>
+
+            <!-- 子模块 1：Video Showreel -->
+            <div id="project-showreel-container" class="reveal reveal-delay-1 mb-32 relative z-20"></div>
+            
+            <!-- 子模块 2：商业项目解析 -->
+            <div id="project-cases-header" class="reveal mb-12 flex flex-col items-center text-center relative z-20"></div>
+            <div id="projects-grid" class="grid grid-cols-1 lg:grid-cols-2 items-start gap-6 md:gap-10 relative z-20 mb-32"></div>
+
+            <!-- 子模块 3：渲染单体作品 -->
+            <div id="project-renders-header" class="reveal mb-12 flex flex-col items-center text-center relative z-20"></div>
+            <div id="renders-grid" class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 relative z-20"></div>
+        </div>
+    </section>
+
+    <!-- 工作经历 -->
+    <section id="experience" class="py-24 relative z-10">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4 mb-20 reveal">
+                <div class="w-2 h-8 bg-blue-500 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]"></div>
+                <h2 id="experience-title" class="text-3xl md:text-4xl font-black text-white tracking-tight"></h2>
+            </div>
+            <div id="experience-list" class="relative pl-4 md:pl-6 pb-4 ml-2 md:ml-4"></div>
+        </div>
+    </section>
+
+    <!-- 专业技能 -->
+    <section id="skills" class="py-24 relative z-10 bg-[#050508]/50 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4 mb-16 reveal">
+                <div class="w-2 h-8 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)]"></div>
+                <h2 id="skills-title" class="text-3xl md:text-4xl font-black text-white tracking-tight"></h2>
+            </div>
+            <div id="skills-grid" class="grid md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="py-20 relative z-10 overflow-hidden bg-[#030305]/60 backdrop-blur-lg border-t border-white/5">
+        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-indigo-600/5 rounded-full mix-blend-screen filter blur-[100px] pointer-events-none"></div>
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center relative z-10">
+            <div id="footer-logo" class="font-black text-4xl tracking-tighter mb-8"></div>
+            <p id="footer-thankyou" class="text-slate-400 text-sm md:text-base mb-12 font-light tracking-wide leading-relaxed"></p>
+            <div id="footer-links" class="flex gap-6"></div>
+            <p id="footer-copyright" class="text-slate-600 mt-20 text-xs font-mono"></p>
+        </div>
+    </footer>
+
+    <!-- 超清交互查看器 -->
+    <div id="image-lightbox" class="fixed inset-0 z-[100] hidden bg-[#030305]/95 backdrop-blur-2xl opacity-0 transition-opacity duration-300 select-none flex flex-col items-center justify-center">
+        
+        <button id="close-lightbox" onclick="closeLightboxFn()" class="interactive-element fixed top-6 right-6 md:top-8 md:right-8 z-[110] text-white/50 hover:text-white bg-white/5 hover:bg-white/10 hover:scale-110 p-4 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 shadow-xl">
+            <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+
+        <div id="lightbox-counter" class="fixed top-8 left-1/2 -translate-x-1/2 text-white/90 text-sm font-mono tracking-widest bg-black/60 px-5 py-2.5 rounded-full backdrop-blur-md border border-white/20 z-[110] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex items-center gap-4"></div>
+
+        <div id="lightbox-zoom-wrapper" class="relative w-full h-full flex items-center justify-center overflow-hidden cursor-grab z-[105]">
+            <img id="lightbox-img" src="" class="max-w-[95vw] max-h-[90vh] object-contain shadow-[0_15px_60px_rgba(0,0,0,0.8)] rounded-md pointer-events-none" draggable="false">
+        </div>
+
+        <button id="lightbox-prev" onclick="navigateLightbox(-1, event)" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 hover:scale-110 p-4 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 shadow-2xl z-[110] interactive-element">
+            <i data-lucide="chevron-left" class="w-8 h-8"></i>
+        </button>
+        <button id="lightbox-next" onclick="navigateLightbox(1, event)" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 hover:scale-110 p-4 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 shadow-2xl z-[110] interactive-element">
+            <i data-lucide="chevron-right" class="w-8 h-8"></i>
+        </button>
+
+        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 text-white/50 text-[11px] font-medium tracking-widest bg-black/40 px-5 py-2 rounded-full backdrop-blur-md z-[110] pointer-events-none shadow-lg border border-white/5 flex items-center gap-2">
+            <i data-lucide="mouse" class="w-3.5 h-3.5"></i> 滚动缩放 / 拖拽平移
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 核心数据配置
+        // ==========================================
+        const RESUME_DATA = {
+            global: {
+                pageTitle: "麦富棉 | 三维动态设计师简历",
+                logoStart: "MFM",        
+                logoEnd: " .DESIGN",      
+                navLinks: [              
+                    { name: "首页", href: "#hero" },
+                    { name: "个人总结", href: "#profile" },
+                    { name: "作品展示", href: "#projects" },
+                    { name: "工作经历", href: "#experience" },
+                    { name: "技能教育", href: "#skills" }
+                ]
+            },
+            hero: {
+                tagline: "7 年跨境电商视觉 <span class='mx-3 opacity-30'>|</span> 3C 数码 & 智能家居",
+                greeting: "Hi, 我是",
+                name: "麦富棉", 
+                position: "资深视觉设计 <span class='mx-4 text-slate-600 font-light'>/</span> 三维动态专家",
+                description: "精通 C4D + Octane 和 Keyshot 渲染流程，具备从产品模型优化到动态视频、全案视觉排版的综合输出能力。以技术驱动效率，专注提升品牌视觉转化率。",
+                location: "Shenzhen",
+                phone: "186-6584-8033",
+                portfolioName: "Behance Profile",
+                portfolioLink: "#", 
+                ipImage: "images/IP.png"
+            },
+            profile: {
+                sectionTitle: "专业综述",
+                items: [
+                    { color: "indigo", text: "<strong class='text-white font-medium'>全流程视觉把控：</strong>拥有 7 年电商深耕经验，历经平面、渲染、视频多岗位历练，具备从产品建模到高精排版、三维动态的全流程输出能力。" },
+                    { color: "purple", text: "<strong class='text-white font-medium'>深耕 3C 与智能家居：</strong>深度理解亚马逊视觉逻辑，精通钢化膜、支架、键盘等产品的商业化表现。" },
+                    { color: "cyan", text: "<strong class='text-white font-medium'>技术赋能与效能提升：</strong>熟练运用AI赋能设计，配合渲染，提升效率，优化产品模型，建立优质模型资产库。" },
+                    { color: "blue", text: "<strong class='text-white font-medium'>稳健的项目落地能力：</strong>在深跨企服务超 6 年，具备极强的跨部门协作与视觉表现经验，保证产品的视觉效果统一。" }
+                ]
+            },
+            carousel: [
+                {
+                    title: "2023-2025 个人动态 Showreel", desc: "产品动画集锦。涵盖分镜构思、C4D 动画、Octane 渲染及 AE 后期合成全流程。",
+                    tags: ["MOTION", "C4D + AE"], theme: "purple", link: "#project-showreel", image: "images/showreel.mp4" 
+                },
+                {
+                    title: "iPhone 17 Pro max钢化膜套图展示", desc: "通过星空暗黑风格来凸显科技感，区别于以往的表现方式，显著提升页面转化率。",
+                    tags: ["C4D + OC", "亚马逊 A+"], theme: "blue", link: "#project-project1", image: "images/01/000.webp" 
+                },
+                {
+                    title: "日常产品渲染练习", desc: "日常的一些材质和光影练习，深入了解材质原理，通过调整光影和材质，打造极具真实的产品质感。",
+                    tags: ["微距渲染", "光影塑造"], theme: "pink", link: "#project-project4", image: "images/Render/001.webp" 
+                }
+            ],
+            
+            projects: {
+                sectionTitle: "WORKS / 项目展示",
+                
+                showreel: {
+                    id: "project-showreel", 
+                    tag: "VIDEO PRODUCTION", 
+                    tagColor: "purple", 
+                    title: "2023-2025 个人三维动态 Showreel", 
+                    desc: "整合过往产品的动态视觉片段。从分镜构思到 C4D 动画、Octane 渲染输出及 AE 后期合成，全流程独立制作。", 
+                    videoSrc: "images/showreel.mp4" 
+                },
+                
+                caseStudies: {
+                    tag: "CASE STUDIES",
+                    tagColor: "blue",
+                    title: "亚马逊图片视觉展示",
+                    desc: "精选过往主导的电商视觉图片，涵盖从产品模型优化、渲染到后期排版的完整落地表现。",
+                    list: [
+                        { 
+                            id: "project-project1", 
+                            tag: "iPhone screen protector", tagTheme: "blue", 
+                            title: "iPhone 17 Pro max钢化膜套图展示", 
+                            desc: "通过星空暗黑风格来凸显科技感，区别于以往的表现方式。", 
+                            images: [
+                                "images/01/01.webp",
+                                "images/01/02.webp",
+                                "images/01/03.webp",
+                                "images/01/04.webp",
+                                "images/01/05.webp",
+                                "images/01/06.webp",
+                                "images/01/07.webp",
+                                "images/01/08.webp",
+                                "images/01/A+.webp" 
+                            ]
+                        },
+                        { 
+                            id: "project-project2", 
+                            tag: "iPad screen protector", tagTheme: "indigo", 
+                            title: "iPad 保护膜套图展示", 
+                            desc: "优化钢化膜模板，用不一样的版式来展示。", 
+                            images: [
+                               "images/02/01-1.webp",
+                                "images/02/02.webp",
+                                "images/02/03.webp",
+                                "images/02/04.webp",
+                                "images/02/05.webp",
+                                "images/02/06.webp",
+                                "images/02/07.webp",
+                                "images/02/A+PC-1.webp"
+                            ] 
+                        },
+                        { 
+                            id: "project-project3", 
+                            tag: "Papersense series", tagTheme: "cyan", 
+                            title: "Papersense-套图展示", 
+                            desc: "利用夸张的透视来突出产品，在第一时间吸引目光。", 
+                            images: [
+                                 "images/Papersense/01.webp",
+                                "images/Papersense/02.webp",
+                                "images/Papersense/03.webp",
+                                "images/Papersense/04.webp",
+                                "images/Papersense/05.webp",
+                                "images/Papersense/06.webp",
+                                "images/Papersense/07.webp",
+                                "images/Papersense/A+PC.webp"
+                            ] 
+                        },
+                        { 
+                            id: "project-project4", 
+                            tag: "Large R-angle screen protector", tagTheme: "pink", 
+                            title: "ipad 大R角钢化膜套图展示", 
+                            desc: "通过特定的方式，表现产品大R角的特点", 
+                            images: [
+                               "images/SmoothArmor/01.webp",
+                                "images/SmoothArmor/02.webp",
+                                "images/SmoothArmor/03.webp",
+                                "images/SmoothArmor/04.webp",
+                                "images/SmoothArmor/05.webp",
+                                "images/SmoothArmor/06.webp",
+                                "images/SmoothArmor/07.webp",
+                                "images/SmoothArmor/A+PC.webp"
+                            ]
+                        }
+                    ]
+                },
+                
+                renders: {
+                    tag: "DAILY RENDERS",
+                    tagColor: "cyan",
+                    title: "3D RENDERS / 渲染作品",
+                    desc: "日常的一些材质和光影练习，点击可全屏高清浏览细节。",
+                    images: [
+                        "images/SmoothArmor钢化膜-jpg/01.webp",
+                        "images/Render/001.webp",
+                        "images/Render/002.webp",
+                        "images/Render/003.webp",
+                        "images/Render/004.webp",
+                        "images/Render/005.webp",
+                        "images/Render/006.webp",
+                        "images/Render/007.webp",
+                        "images/Render/008.webp",
+                        "images/Render/009.webp",
+                        "images/Render/010.webp"
+                    ]
+                }
+            },
+
+            experience: {
+                sectionTitle: "工作经历",
+                companies: [
+                    {
+                        time: "2019.11 - 至今 (6年 3个月)",
+                        companyName: "深圳市宏泰祺科技有限公司",
+                        locationRole: "三维动态设计师 | 深圳",
+                        theme: "blue",
+                        subPositions: [
+                            { title: "资深视觉设计（钢化膜项目组）", time: "2025.05 - 至今", desc: "负责亚马逊平台手机/平板钢化膜主图及 A+ 设计。主要负责 iPhone、iPad 的图片模板设计", theme: "blue" },
+                            { title: "三维动态设计（视频组）", time: "2023.01 - 2025.4", desc: "负责产品的广告视频制作，从早期 layout 到后期渲染合成，纯个人独立完成输出，提供极具视觉冲击力的营销内容。", theme: "indigo" },
+                            { title: "三维设计师（渲染组）", time: "2020.11 - 2023.12", desc: "负责日常的渲染工作，渲染与后期精修，优化工业模型，建立模型资产库，优化渲染流程和产品质感，为平面组同事提供高质量的渲染图片支持。", theme: "purple" },
+                            { title: "平面设计师（平面组）", time: "2019.11 - 2020.10", desc: "负责手机平板支架及键盘类目的主图A+设计。", theme: "pink" }
+                        ]
+                    },
+                    {
+                        time: "2018.06 - 2019.06 (1年)",
+                        companyName: "江门鸿程红木家具公司",
+                        locationRole: "设计助理 | 江门",
+                        theme: "slate",
+                        listDesc: [
+                            "负责活动传单和海报的排版制作",
+                            "协助拍摄"
+                        ]
+                    }
+                ]
+            },
+            skills: {
+                sectionTitle: "核心技能",
+                blocks: [
+                    { title: "3D & Render", icon: "box", theme: "blue", items: [{ name: "Cinema 4D", level: "PRO" }, { name: "Octane", level: "PRO" }, { name: "Keyshot" }, { name: "Rhino" }] },
+                    { title: "Motion & Post", icon: "video", theme: "purple", items: [{ name: "After Effects", level: "ADV" }, { name: "Premiere Pro" }, { name: "DaVinci Resolve" }] },
+                    { title: "Graphic & Script", icon: "pen-tool", theme: "indigo", items: [{ name: "Photoshop", level: "PRO" }, { name: "Illustrator" }, { name: "Figma" }, { name: "PS 自动化脚本" }] }
+                ],
+                education: { school: "五邑大学", major: "交通工程", time: "2015.09 - 2019.07 | 本科", theme: "blue" }
+            },
+            footer: {
+                thankYouText: "卓越的设计不仅仅是视觉的表达，更是解决商业问题的艺术。期待与您的合作。",
+                email: "methmi@163.com", socialLink: "#", copyright: "© 2026 MFM DESIGN. ALL RIGHTS RESERVED."
+            }
+        };
+
+        // ==========================================
+        // UI 渲染逻辑 
+        // ==========================================
+        function renderPageContent() {
+            const data = RESUME_DATA;
+
+            // Nav
+            document.getElementById('nav-logo').innerHTML = `<span class="text-white">${data.global.logoStart}</span><span class="logo-gradient font-black">${data.global.logoEnd}</span>`;
+            document.getElementById('nav-links').innerHTML = data.global.navLinks.map(link => 
+                `<a href="${link.href}" class="interactive-element text-slate-400 hover:text-white hover:bg-white/5 px-4 py-2 rounded-full transition-colors duration-300">${link.name}</a>`
+            ).join('');
+
+            // Hero
+            document.getElementById('hero-tagline').innerHTML = data.hero.tagline;
+            document.getElementById('hero-title').innerHTML = `
+                <div class="text-white text-5xl md:text-[3.5rem] font-bold tracking-tight mb-2 animate-hero-text" style="animation-delay: 0.2s;">${data.hero.greeting}</div>
+                <div class="logo-gradient w-max text-[5.5rem] md:text-[7.5rem] font-black tracking-tighter leading-none pb-2 cursor-default animate-hero-text" style="animation-delay: 0.3s;">${data.hero.name}</div>
+            `;
+            document.getElementById('hero-subtitle').innerHTML = data.hero.position;
+            document.getElementById('hero-desc').innerHTML = data.hero.description;
+            document.getElementById('hero-ip-img').src = data.hero.ipImage;
+            
+            // Hero Contact
+            document.getElementById('hero-contact').innerHTML = `
+                <div class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#111118] border border-white/5 shadow-lg transition-colors hover:bg-white/5 cursor-default"><i data-lucide="map-pin" class="w-4 h-4 text-blue-400"></i> ${data.hero.location}</div>
+                <div class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#111118] border border-white/5 shadow-lg transition-colors hover:bg-white/5 cursor-default"><i data-lucide="phone" class="w-4 h-4 text-purple-400"></i> ${data.hero.phone}</div>
+                <div class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#111118] border border-white/5 shadow-lg transition-colors hover:bg-white/5 interactive-element"><i data-lucide="link" class="w-4 h-4 text-cyan-400"></i> <a href="${data.hero.portfolioLink}" target="_blank" class="hover:text-cyan-300 transition-colors">${data.hero.portfolioName}</a></div>
+            `;
+
+            // Profile
+            document.getElementById('profile-title').innerText = data.profile.sectionTitle;
+            document.getElementById('profile-list').innerHTML = data.profile.items.map((item, index) => `
+                <div class="flex items-start gap-5 reveal reveal-delay-${index % 3 + 1}">
+                    <div class="mt-2 w-1.5 h-1.5 rounded-full bg-${item.color}-400 shrink-0 shadow-[0_0_8px_rgba(255,255,255,0.3)]"></div>
+                    <p class="text-[1.05rem]">${item.text}</p>
+                </div>
+            `).join('');
+
+
+            // 大板块总标题
+            document.getElementById('projects-main-title').innerText = data.projects.sectionTitle;
+            
+            // --- 子模块 1: Showreel ---
+            const reel = data.projects.showreel;
+            document.getElementById('project-showreel-container').innerHTML = `
+                <div id="${reel.id}" class="scroll-mt-32 max-w-5xl mx-auto flex flex-col items-center relative">
+                    <div class="text-center mb-8 max-w-2xl px-4 flex flex-col items-center">
+                        <div class="inline-flex items-center justify-center gap-2 mb-4 px-3 py-1 rounded text-xs font-semibold bg-${reel.tagColor}-500/10 text-${reel.tagColor}-400 border border-${reel.tagColor}-500/20 tracking-widest cursor-default">${reel.tag}</div>
+                        <h3 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">${reel.title}</h3>
+                        <p class="text-slate-400 text-sm md:text-base font-light leading-relaxed">${reel.desc}</p>
+                    </div>
+                    
+                    <div id="showreel-backdrop" class="fixed inset-0 bg-[#020203]/95 backdrop-blur-xl z-[90] opacity-0 pointer-events-none transition-opacity duration-500 cursor-pointer" onclick="toggleShowreel(event)"></div>
+
+                    <div id="showreel-wrapper" class="w-full aspect-video rounded-2xl overflow-hidden bg-[#1a1a1a] shadow-2xl relative border border-white/5 group z-10 cursor-pointer" onclick="toggleShowreel(event)">
+                        <video id="showreel-video" src="${reel.videoSrc}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loop muted playsinline preload="metadata" onclick="if(window.isVideoExpanded) event.stopPropagation();"></video>
+                        
+                        <div id="showreel-overlay" class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center pointer-events-none">
+                            <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-${reel.tagColor}-400/90 backdrop-blur-md flex items-center justify-center text-white border border-white/20 shadow-[0_0_40px_rgba(var(--tw-colors-${reel.tagColor}-400),0.4)] transform transition-transform duration-300 group-hover:scale-110 group-hover:bg-${reel.tagColor}-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 ml-2" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                            </div>
+                        </div>
+
+                        <button id="showreel-close-btn" class="absolute top-4 right-4 md:top-6 md:right-6 opacity-0 pointer-events-none transition-all duration-300 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 hover:scale-110 p-3 rounded-full z-[110]" onclick="toggleShowreel(event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // --- 子模块 2: 商业项目列表 ---
+            const cases = data.projects.caseStudies;
+            document.getElementById('project-cases-header').innerHTML = `
+                <div class="inline-flex items-center justify-center gap-2 mb-4 px-3 py-1 rounded text-xs font-semibold bg-${cases.tagColor}-500/10 text-${cases.tagColor}-400 border border-${cases.tagColor}-500/20 tracking-widest cursor-default">${cases.tag}</div>
+                <h3 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">${cases.title}</h3>
+                <p class="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-2xl">${cases.desc}</p>
+            `;
+
+            document.getElementById('projects-grid').innerHTML = cases.list.map((p, index) => {
+                const imgCount = p.images.length;
+                let gridContentHtml = '';
+
+                if (imgCount >= 5) {
+                    const normalImages = p.images.slice(0, -1);
+                    const tallImage = p.images[p.images.length - 1];
+                    const tallIndex = p.images.length - 1;
+
+                    const normalHtml = normalImages.map((imgUrl, i) => `
+                        <div class="relative w-full break-inside-avoid mb-2 sm:mb-2.5 rounded-md sm:rounded-lg overflow-hidden cursor-pointer group bg-[#111118] border border-white/5" onclick="openLightbox(${JSON.stringify(p.images).replace(/"/g, '&quot;')}, ${i})">
+                            <img src="${imgUrl}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                                <span class="bg-black/70 p-2 sm:p-2.5 rounded-full text-white backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 transform scale-75 group-hover:scale-100 transition-transform duration-300"><i data-lucide="zoom-in" class="w-4 h-4 text-${p.tagTheme}-400"></i></span>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const tallHtml = `
+                        <div class="relative w-full rounded-md sm:rounded-lg overflow-hidden cursor-pointer group bg-[#111118] border border-white/5" onclick="openLightbox(${JSON.stringify(p.images).replace(/"/g, '&quot;')}, ${tallIndex})">
+                            <img src="${tallImage}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                                <span class="bg-black/70 p-2 sm:p-2.5 rounded-full text-white backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 transform scale-75 group-hover:scale-100 transition-transform duration-300"><i data-lucide="zoom-in" class="w-4 h-4 text-${p.tagTheme}-400"></i></span>
+                            </div>
+                        </div>
+                    `;
+
+                    gridContentHtml = `
+                        <div class="flex gap-2 sm:gap-2.5 w-full items-start">
+                            <div class="w-[66.666%] columns-2 gap-2 sm:gap-2.5">
+                                ${normalHtml}
+                            </div>
+                            <div class="w-[33.333%]">
+                                ${tallHtml}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const normalHtml = p.images.map((imgUrl, i) => `
+                        <div class="relative w-full break-inside-avoid mb-2 sm:mb-2.5 rounded-md sm:rounded-lg overflow-hidden cursor-pointer group bg-[#111118] border border-white/5" onclick="openLightbox(${JSON.stringify(p.images).replace(/"/g, '&quot;')}, ${i})">
+                            <img src="${imgUrl}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                                <span class="bg-black/70 p-2 sm:p-2.5 rounded-full text-white backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 transform scale-75 group-hover:scale-100 transition-transform duration-300"><i data-lucide="zoom-in" class="w-4 h-4 text-${p.tagTheme}-400"></i></span>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    gridContentHtml = `
+                        <div class="columns-2 gap-2 sm:gap-2.5 w-full">
+                            ${normalHtml}
+                        </div>
+                    `;
+                }
+
+                return `
+                <div id="${p.id}" class="scroll-mt-32 w-full flex flex-col bg-[#0a0a0f]/90 backdrop-blur-xl rounded-[1.5rem] border border-white/5 p-5 md:p-6 shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:border-${p.tagTheme}-500/30 hover:shadow-[0_20px_40px_-10px_rgba(var(--tw-colors-${p.tagTheme}-500),0.15)] reveal reveal-delay-${index % 2 + 1}">
+                    <div class="flex flex-col items-center text-center mb-5">
+                        <div class="inline-flex w-max mb-2.5 px-3 py-0.5 rounded text-[10px] font-bold bg-${p.tagTheme}-500/10 text-${p.tagTheme}-400 border border-${p.tagTheme}-500/20 tracking-widest">${p.tag}</div>
+                        <h3 class="text-xl md:text-2xl font-black text-white mb-2 tracking-wide">${p.title}</h3>
+                        <p class="text-slate-400 text-xs font-light leading-relaxed max-w-sm">${p.desc}</p>
+                    </div>
+                    <div class="w-full pt-3 border-t border-white/5">
+                        ${gridContentHtml}
+                    </div>
+                </div>
+                `
+            }).join('');
+
+
+            // --- 子模块 3: 渲染单体作品 (Renders) ---
+            const renders = data.projects.renders;
+            document.getElementById('project-renders-header').innerHTML = `
+                <div class="inline-flex items-center justify-center gap-2 mb-4 px-3 py-1 rounded text-xs font-semibold bg-${renders.tagColor}-500/10 text-${renders.tagColor}-400 border border-${renders.tagColor}-500/20 tracking-widest cursor-default">${renders.tag}</div>
+                <h3 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">${renders.title}</h3>
+                <p class="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-2xl">${renders.desc}</p>
+            `;
+            
+            const allRendersArrStr = JSON.stringify(renders.images).replace(/"/g, '&quot;');
+            // 优化：修改了此处的悬浮图标，将 scan-line 替换为与上方一致的 zoom-in，保证整体设计的连贯性
+            document.getElementById('renders-grid').innerHTML = renders.images.map((imgUrl, i) => `
+                <div class="relative break-inside-avoid mb-4 rounded-xl overflow-hidden cursor-pointer group bg-[#111118] border border-white/5 reveal reveal-delay-${i % 3 + 1}" onclick="openLightbox(${allRendersArrStr}, ${i})">
+                    <img src="${imgUrl}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03] group-hover:opacity-70" loading="lazy">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-t from-[#030305]/80 via-transparent to-transparent">
+                        <div class="bg-black/60 p-3.5 rounded-full text-white backdrop-blur-md shadow-[0_0_25px_rgba(0,0,0,0.8)] border border-white/10 transform scale-50 group-hover:scale-100 transition-transform duration-300 ease-out">
+                            <i data-lucide="zoom-in" class="w-6 h-6 text-${renders.tagColor}-400"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+
+            // 工作经历
+            document.getElementById('experience-title').innerText = data.experience.sectionTitle;
+            document.getElementById('experience-list').innerHTML = data.experience.companies.map((comp, index) => `
+                <div class="relative pl-8 md:pl-10 reveal reveal-delay-${index % 3 + 1} mb-16 last:mb-0">
+                    <div class="absolute left-[-2px] top-3 bottom-[-4rem] w-px bg-slate-800 ${index === data.experience.companies.length - 1 ? 'hidden' : ''}"></div>
+                    <div class="absolute left-[-11px] top-1.5 w-5 h-5 rounded-full bg-[#030305] flex items-center justify-center z-10">
+                        <div class="w-2.5 h-2.5 rounded-full bg-${comp.theme}-500 shadow-[0_0_10px_rgba(var(--tw-colors-${comp.theme}-500),0.8)]"></div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="text-${comp.theme}-400 font-bold text-sm font-mono mb-2">${comp.time}</div>
+                        <h3 class="text-2xl font-black text-white mb-2 tracking-wide">${comp.companyName}</h3>
+                        <p class="text-slate-400 text-sm">${comp.locationRole}</p>
+                    </div>
+                    ${comp.subPositions ? `<div class="flex flex-col gap-4 mt-6">
+                        ${comp.subPositions.map((sub) => `
+                            <div class="relative bg-[#0a0a0f] rounded-2xl p-6 md:p-7 border border-white/5 transition-all duration-300 shadow-lg hover:-translate-y-1 hover:border-${sub.theme}-500/30 hover:shadow-[0_10px_20px_-10px_rgba(var(--tw-colors-${sub.theme}-500),0.15)] group cursor-default">
+                                <div class="absolute inset-y-0 left-0 w-[3px] rounded-l-2xl bg-gradient-to-b from-${sub.theme}-500/80 to-transparent transition-all duration-300 group-hover:w-1 group-hover:from-${sub.theme}-400"></div>
+                                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+                                    <h4 class="text-lg font-bold text-white transition-colors duration-300">${sub.title}</h4>
+                                    <span class="text-xs text-slate-500 font-mono tracking-widest md:shrink-0">${sub.time}</span>
+                                </div>
+                                <p class="text-slate-400 text-sm font-light leading-relaxed">${sub.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>` : ''}
+                    ${comp.listDesc ? `<div class="mt-4 pl-2">
+                        <ul class="list-disc list-inside text-slate-400 text-sm leading-loose font-light space-y-2">
+                            ${comp.listDesc.map(desc => `<li>${desc}</li>`).join('')}
+                        </ul>
+                    </div>` : ''}
+                </div>
+            `).join('');
+
+            // 技能
+            document.getElementById('skills-title').innerText = data.skills.sectionTitle;
+            document.getElementById('skills-grid').innerHTML = data.skills.blocks.map((block, index) => `
+                <div class="glass-card p-7 rounded-3xl relative overflow-hidden flex flex-col min-h-[220px] reveal reveal-delay-${index % 3 + 1} transition-all duration-300 hover:-translate-y-1 hover:border-${block.theme}-500/30 hover:shadow-[0_15px_30px_-10px_rgba(var(--tw-colors-${block.theme}-500),0.15)] group cursor-default">
+                    <div class="flex flex-col gap-4 relative z-10 h-full">
+                        <div class="w-12 h-12 rounded-2xl bg-${block.theme}-500/10 flex items-center justify-center border border-${block.theme}-500/20 text-${block.theme}-400 mb-2 transition-transform duration-300 group-hover:scale-110 group-hover:bg-${block.theme}-500/20">
+                            <i data-lucide="${block.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-white tracking-wide">${block.title}</h3>
+                        <div class="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/5 transition-colors duration-300 group-hover:border-${block.theme}-500/30">
+                            ${block.items.map(i => `
+                                <span class="px-3 py-1.5 rounded-lg bg-[#0a0a0f] text-slate-300 text-xs font-medium border border-white/5 flex items-center gap-2">
+                                    ${i.name} ${i.level ? `<span class="bg-${block.theme}-500/20 text-${block.theme}-300 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold">${i.level}</span>` : ''}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            const edTheme = data.skills.education.theme || 'blue';
+            document.getElementById('skills-grid').innerHTML += `
+                <div class="glass-card p-7 rounded-3xl relative overflow-hidden flex flex-col min-h-[220px] reveal reveal-delay-3 transition-all duration-300 hover:-translate-y-1 hover:border-${edTheme}-500/30 hover:shadow-[0_15px_30px_-10px_rgba(var(--tw-colors-${edTheme}-500),0.15)] group cursor-default">
+                    <div class="flex flex-col relative z-10 h-full">
+                        <div class="w-12 h-12 rounded-2xl bg-${edTheme}-500/10 flex items-center justify-center border border-${edTheme}-500/20 text-${edTheme}-400 mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:bg-${edTheme}-500/20">
+                            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-black text-white tracking-wide mb-auto">EDUCATION</h3>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex flex-col gap-1 transition-colors duration-300 group-hover:border-${edTheme}-500/30">
+                            <h4 class="text-lg font-bold text-white tracking-wide">${data.skills.education.school}</h4>
+                            <p class="text-slate-400 font-medium text-sm mb-1">${data.skills.education.major}</p>
+                            <p class="text-slate-600 text-[11px] font-mono tracking-wider">${data.skills.education.time}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Footer
+            document.getElementById('footer-logo').innerHTML = `<span class="text-white">${data.global.logoStart}</span><span class="logo-gradient font-black">${data.global.logoEnd}</span>`;
+            document.getElementById('footer-thankyou').innerText = data.footer.thankYouText;
+            document.getElementById('footer-copyright').innerHTML = data.footer.copyright;
+            document.getElementById('footer-links').innerHTML = `
+                <a href="mailto:${data.footer.email}" class="interactive-element w-14 h-14 flex items-center justify-center rounded-full bg-[#111118] border border-white/10 hover:border-indigo-400 hover:text-indigo-400 hover:shadow-[0_0_15px_rgba(129,140,248,0.3)] hover:-translate-y-1 transition-all duration-300 text-slate-400 shadow-lg">
+                    <i data-lucide="mail" class="w-6 h-6"></i>
+                </a>
+                <a href="${data.footer.socialLink}" target="_blank" class="interactive-element w-14 h-14 flex items-center justify-center rounded-full bg-[#111118] border border-white/10 hover:border-purple-400 hover:text-purple-400 hover:shadow-[0_0_15px_rgba(192,132,252,0.3)] hover:-translate-y-1 transition-all duration-300 text-slate-400 shadow-lg">
+                    <i data-lucide="fingerprint" class="w-6 h-6"></i>
+                </a>
+            `;
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ==========================================
+        // 超清交互查看器引擎 
+        // ==========================================
+        window.currentLightboxImages = [];
+        window.currentLightboxIndex = 0;
+        
+        let lbScale = 1, lbPanX = 0, lbPanY = 0, isLbDragging = false, lbStartX, lbStartY;
+
+        window.openLightbox = function(imageUrls, startIndex = 0) {
+            window.currentLightboxImages = imageUrls;
+            window.currentLightboxIndex = startIndex;
+            const lightbox = document.getElementById('image-lightbox');
+            lightbox.classList.remove('hidden'); 
+            document.body.style.overflow = 'hidden'; 
+            renderLightboxContent();
+            setTimeout(() => { lightbox.classList.remove('opacity-0'); }, 10);
+        }
+
+        window.renderLightboxContent = function() {
+            const images = window.currentLightboxImages;
+            const idx = window.currentLightboxIndex;
+            const imgEl = document.getElementById('lightbox-img');
+            imgEl.src = images[idx];
+            resetLightboxZoom();
+            
+            const counter = document.getElementById('lightbox-counter');
+            if (images.length > 1) {
+                counter.style.display = 'flex';
+                counter.innerHTML = `
+                    <span class="cursor-pointer hover:text-white/50 px-2 interactive-element" onclick="navigateLightbox(-1, event)"><i data-lucide="chevron-left" class="w-4 h-4"></i></span>
+                    ${idx + 1} / ${images.length}
+                    <span class="cursor-pointer hover:text-white/50 px-2 interactive-element" onclick="navigateLightbox(1, event)"><i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                `;
+            } else {
+                counter.style.display = 'none';
+            }
+            
+            document.getElementById('lightbox-prev').style.display = images.length > 1 ? 'block' : 'none';
+            document.getElementById('lightbox-next').style.display = images.length > 1 ? 'block' : 'none';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        window.navigateLightbox = function(dir, event) {
+            if(event) event.stopPropagation();
+            const len = window.currentLightboxImages.length;
+            window.currentLightboxIndex = (window.currentLightboxIndex + dir + len) % len;
+            renderLightboxContent();
+        }
+
+        window.closeLightboxFn = function() {
+            const lightbox = document.getElementById('image-lightbox');
+            lightbox.classList.add('opacity-0'); 
+            document.body.style.overflow = ''; 
+            setTimeout(() => { lightbox.classList.add('hidden'); }, 300); 
+        };
+
+        function updateLightboxTransform(instant = false) {
+            const img = document.getElementById('lightbox-img');
+            if (img) {
+                img.style.transition = instant ? 'none' : 'transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                img.style.transform = `translate(${lbPanX}px, ${lbPanY}px) scale(${lbScale})`;
+            }
+        }
+
+        function resetLightboxZoom() {
+            lbScale = 1; lbPanX = 0; lbPanY = 0;
+            updateLightboxTransform();
+        }
+
+        function initZoomPan() {
+            const wrapper = document.getElementById('lightbox-zoom-wrapper');
+            const lightbox = document.getElementById('image-lightbox');
+            if(!wrapper) return;
+
+            wrapper.addEventListener('wheel', (e) => {
+                if(lightbox.classList.contains('hidden')) return;
+                e.preventDefault(); 
+                const zoomIntensity = 0.15; 
+                const delta = e.deltaY > 0 ? -1 : 1; 
+                const newScale = lbScale + (delta * zoomIntensity);
+                lbScale = Math.max(0.5, Math.min(newScale, 5)); 
+                updateLightboxTransform();
+            }, {passive: false});
+
+            wrapper.addEventListener('mousedown', (e) => {
+                if (e.target.closest('button') || e.target.closest('#lightbox-counter')) return; 
+                isLbDragging = true;
+                lbStartX = e.clientX - lbPanX;
+                lbStartY = e.clientY - lbPanY;
+                wrapper.classList.remove('cursor-grab');
+                wrapper.classList.add('cursor-grabbing');
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if(!isLbDragging) return;
+                lbPanX = e.clientX - lbStartX;
+                lbPanY = e.clientY - lbStartY;
+                updateLightboxTransform(true); 
+            });
+
+            window.addEventListener('mouseup', () => {
+                isLbDragging = false;
+                wrapper.classList.add('cursor-grab');
+                wrapper.classList.remove('cursor-grabbing');
+            });
+
+            wrapper.addEventListener('click', (e) => {
+                if (Math.abs(lbPanX - (e.clientX - lbStartX)) < 5 && Math.abs(lbPanY - (e.clientY - lbStartY)) < 5) {
+                    if (e.target === wrapper) closeLightboxFn();
+                }
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('hidden')) {
+                    if (e.key === 'Escape') closeLightboxFn();
+                    else if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                    else if (e.key === 'ArrowRight') navigateLightbox(1);
+                    else if (e.key === '0') resetLightboxZoom(); 
+                }
+            });
+        }
+
+        // ==========================================
+        // 视频播放器逻辑
+        // ==========================================
+        window.isVideoExpanded = false;
+        window.toggleShowreel = function(e) {
+            if(e) e.stopPropagation(); 
+            const wrapper = document.getElementById('showreel-wrapper');
+            const video = document.getElementById('showreel-video');
+            const overlay = document.getElementById('showreel-overlay');
+            const backdrop = document.getElementById('showreel-backdrop');
+            const closeBtn = document.getElementById('showreel-close-btn');
+
+            if (!window.isVideoExpanded) {
+                window.isVideoExpanded = true;
+                document.body.style.overflow = 'hidden'; 
+                const rect = wrapper.getBoundingClientRect();
+                const placeholder = document.createElement('div');
+                placeholder.id = 'showreel-placeholder';
+                placeholder.className = 'w-full aspect-video relative z-0';
+                wrapper.parentNode.insertBefore(placeholder, wrapper);
+                
+                // 将 wrapper 移动到 document.body
+                // 注意：在 HTML5 规范中，移动 DOM 节点中的 video 元素会导致其播放状态被重置。
+                document.body.appendChild(wrapper);
+
+                wrapper.classList.remove('relative', 'w-full', 'z-10', 'group');
+                wrapper.classList.add('fixed', 'z-[100]', 'shadow-[0_20px_60px_rgba(0,0,0,0.8)]', 'border-white/10');
+                wrapper.style.transition = 'none'; wrapper.style.margin = '0'; wrapper.style.transform = 'none'; 
+                wrapper.style.left = rect.left + 'px'; wrapper.style.top = rect.top + 'px';
+                wrapper.style.width = rect.width + 'px'; wrapper.style.height = rect.height + 'px';
+                wrapper.offsetHeight; // 强制触发重绘
+
+                requestAnimationFrame(() => {
+                    wrapper.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    const targetWidth = window.innerWidth > 768 ? window.innerWidth * 0.8 : window.innerWidth * 0.95;
+                    const finalWidth = Math.min(targetWidth, 1200); const finalHeight = finalWidth * 9 / 16; 
+                    const targetLeft = (window.innerWidth - finalWidth) / 2; const targetTop = (window.innerHeight - finalHeight) / 2;
+                    wrapper.style.left = targetLeft + 'px'; wrapper.style.top = targetTop + 'px';
+                    wrapper.style.width = finalWidth + 'px'; wrapper.style.height = finalHeight + 'px';
+
+                    // 优化：给浏览器一点点时间处理刚才的 DOM Append，重新挂载完毕后再执行 play()
+                    // 如果不加这个延迟，由于 DOM 节点还在被浏览器重新接管，video.play() 的指令极易被吞噬导致视频停顿。
+                    setTimeout(() => {
+                        video.setAttribute('controls', 'true');
+                        video.muted = false;
+                        const playPromise = video.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(err => {
+                                console.warn('浏览器策略阻止了带声音的自动播放，将降级为静音自动播放', err);
+                                video.muted = true;
+                                video.play();
+                            });
+                        }
+                    }, 100);
+                });
+
+                backdrop.classList.remove('opacity-0', 'pointer-events-none'); backdrop.classList.add('opacity-100', 'pointer-events-auto');
+                closeBtn.classList.remove('opacity-0', 'pointer-events-none'); closeBtn.classList.add('opacity-100', 'pointer-events-auto');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                video.classList.remove('group-hover:scale-105', 'object-cover'); 
+                video.classList.add('object-contain', 'bg-black');
+                
+            } else {
+                window.isVideoExpanded = false;
+                document.body.style.overflow = ''; 
+                const placeholder = document.getElementById('showreel-placeholder');
+                if (placeholder) {
+                    const rect = placeholder.getBoundingClientRect();
+                    wrapper.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    wrapper.style.left = rect.left + 'px'; wrapper.style.top = rect.top + 'px';
+                    wrapper.style.width = rect.width + 'px'; wrapper.style.height = rect.height + 'px';
+                }
+                backdrop.classList.add('opacity-0', 'pointer-events-none'); backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+                closeBtn.classList.add('opacity-0', 'pointer-events-none'); closeBtn.classList.remove('opacity-100', 'pointer-events-auto');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                video.classList.add('group-hover:scale-105', 'object-cover'); 
+                video.classList.remove('object-contain', 'bg-black');
+                
+                // 缩小后关闭声音并暂停
+                video.muted = true;
+                video.removeAttribute('controls');
+                video.pause();
+
+                setTimeout(() => {
+                    if (!window.isVideoExpanded) {
+                        wrapper.style = ''; wrapper.classList.remove('fixed', 'z-[100]', 'shadow-[0_20px_60px_rgba(0,0,0,0.8)]', 'border-white/10');
+                        wrapper.classList.add('relative', 'w-full', 'z-10', 'group');
+                        if (placeholder) { placeholder.parentNode.insertBefore(wrapper, placeholder); placeholder.remove(); }
+                    }
+                }, 800);
+            }
+        };
+
+        // ==========================================
+        // 轮播图核心
+        // ==========================================
+        let cIdx = 0, cTimer;
+        function initCarouselDOM() {
+            const stage = document.getElementById('carousel-stage');
+            const dots = document.getElementById('carousel-dots');
+            if (!stage || !dots) return;
+            stage.innerHTML = ''; dots.innerHTML = '';
+            
+            stage.addEventListener('mouseenter', () => clearInterval(cTimer));
+            stage.addEventListener('mouseleave', resetTimer);
+
+            RESUME_DATA.carousel.forEach((item, i) => {
+                const card = document.createElement('div');
+                card.className = `absolute inset-0 w-full h-full transition-all duration-700 bg-[#050508] flex items-center justify-center overflow-hidden rounded-2xl`;
+                card.style.opacity = i === 0 ? '1' : '0'; 
+                card.style.zIndex = i === 0 ? '20' : '10';
+                
+                const isVideo = item.image.toLowerCase().endsWith('.mp4') || item.image.toLowerCase().endsWith('.webm');
+                
+                if (isVideo) {
+                    card.innerHTML = `<video src="${item.image}" class="w-full h-full object-cover" autoplay loop muted playsinline></video>`;
+                } else {
+                    card.innerHTML = `<img src="${item.image}" class="w-full h-full object-cover">`;
+                }
+                
+                stage.appendChild(card);
+                
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full cursor-pointer transition-all duration-500 interactive-element hover:bg-white/80 ${i === 0 ? `bg-${item.theme}-400 w-8` : 'bg-white/20'}`;
+                dot.onclick = () => { cIdx = i; renderCarousel(); resetTimer(); };
+                dots.appendChild(dot);
+            });
+            renderCarousel(); 
+            resetTimer(); 
+        }
+
+        function renderCarousel() {
+            const data = RESUME_DATA.carousel; const txt = document.getElementById('carousel-text');
+            if (!txt) return;
+            txt.style.opacity = '0'; txt.style.transform = 'translateY(15px)';
+            setTimeout(() => {
+                const cur = data[cIdx];
+                document.getElementById('c-title').innerText = cur.title;
+                document.getElementById('c-desc').innerText = cur.desc;
+                document.getElementById('c-link').href = cur.link;
+                document.getElementById('c-tags').innerHTML = cur.tags.map(t => `<span class="px-3 py-1 bg-[#111118] border border-white/5 rounded-lg text-${cur.theme}-300 text-xs font-bold">${t}</span>`).join('');
+                document.getElementById('c-link').className = `interactive-element group relative inline-flex items-center gap-3 px-8 py-3.5 rounded-xl bg-[#111118] border border-white/5 text-white text-sm font-bold transition-all w-max overflow-hidden hover:scale-[1.03] hover:border-${cur.theme}-400 hover:shadow-[0_0_15px_rgba(var(--tw-colors-${cur.theme}-400),0.2)]`;
+                txt.style.opacity = '1'; txt.style.transform = 'translateY(0)';
+            }, 300);
+            const stageCards = document.getElementById('carousel-stage').children;
+            const dots = document.getElementById('carousel-dots').children;
+            Array.from(stageCards).forEach((c, i) => { c.style.opacity = i === cIdx ? '1' : '0'; c.style.zIndex = i === cIdx ? '20' : '10'; });
+            Array.from(dots).forEach((d, i) => { d.className = i === cIdx ? `w-8 h-2 rounded-full cursor-pointer transition-all duration-500 interactive-element bg-${data[cIdx].theme}-400` : 'w-2 h-2 rounded-full cursor-pointer transition-all duration-500 interactive-element bg-white/20 hover:bg-white/80'; });
+        }
+        
+        function resetTimer() { 
+            clearInterval(cTimer); 
+            cTimer = setInterval(() => { 
+                cIdx = (cIdx + 1) % RESUME_DATA.carousel.length; 
+                renderCarousel(); 
+            }, 5000); 
+        }
+
+        // ==========================================
+        // 脑图板块动画 (Neural Skill Network)
+        // ==========================================
+        function initNetworkAnimation() {
+            const canvas = document.getElementById('network-lines');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h, particles = [];
+            
+            const resize = () => { 
+                w = canvas.width = canvas.parentElement.clientWidth; 
+                h = canvas.height = canvas.parentElement.clientHeight; 
+            };
+            window.addEventListener('resize', resize); 
+            resize();
+
+            const particleCount = window.innerWidth < 768 ? 35 : 65;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * w, 
+                    y: Math.random() * h,
+                    vx: (Math.random() - 0.5) * 0.6, 
+                    vy: (Math.random() - 0.5) * 0.6,
+                    // 【修改位置】将点变大：增大了粒子的基础半径，从原本的 Math.random() * 1.5 + 0.5 调整为了更大的值
+                    radius: Math.random() * 2.5 + 1.5
+                });
+            }
+
+            const render = () => {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = 'rgba(99, 102, 241, 0.8)'; // indigo 粒子颜色
+                ctx.strokeStyle = 'rgba(99, 102, 241, 0.15)'; // 连线颜色
+                
+                for (let i = 0; i < particles.length; i++) {
+                    let p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    // 边界反弹
+                    if (p.x < 0 || p.x > w) p.vx *= -1;
+                    if (p.y < 0 || p.y > h) p.vy *= -1;
+
+                    // 绘制粒子
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 绘制连线
+                    for (let j = i + 1; j < particles.length; j++) {
+                        let p2 = particles[j];
+                        let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                        if (dist < 110) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.lineWidth = 1 - (dist / 110);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(render);
+            };
+            render();
+        }
+
+        // ==========================================
+        // 初始化辅助逻辑
+        // ==========================================
+        function initNavbar() {
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    navbar.classList.remove('bg-transparent', 'border-transparent', 'py-4');
+                    navbar.classList.add('bg-[#050508]/85', 'backdrop-blur-xl', 'border-white/10', 'py-2', 'shadow-xl');
+                } else {
+                    navbar.classList.add('bg-transparent', 'border-transparent', 'py-4');
+                    navbar.classList.remove('bg-[#050508]/85', 'backdrop-blur-xl', 'border-white/10', 'py-2', 'shadow-xl');
+                }
+            });
+        }
+
+        function initStarfield() {
+            const canvas = document.getElementById('starfield');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h, particles = [], shootingStars = [];
+            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resize); resize();
+            const count = window.innerWidth < 768 ? 60 : 150;
+            for (let i = 0; i < count; i++) {
+                particles.push({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.5 + 0.3, vx: (Math.random() - 0.5) * 0.1, vy: (Math.random() - 0.8) * 0.1, alpha: Math.random() * 0.6 + 0.2, dir: Math.random() > 0.5 ? 1 : -1 });
+            }
+            const spawnShootingStar = () => {
+                if (Math.random() < 0.03 && shootingStars.length < 2) {
+                    shootingStars.push({ x: Math.random() * w + w/2, y: Math.random() * -h/2, len: Math.random() * 80 + 50, speed: Math.random() * 12 + 15, angle: Math.PI / 4 + (Math.random() * 0.1 - 0.05), alpha: 1 });
+                }
+            };
+            const render = () => {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+                    if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+                    p.alpha += 0.005 * p.dir;
+                    if (p.alpha >= 0.9 || p.alpha <= 0.1) p.dir *= -1;
+                    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(167, 139, 250, ${p.alpha})`; ctx.fill();
+                });
+                spawnShootingStar();
+                shootingStars.forEach((star, i) => {
+                    star.x -= Math.cos(star.angle) * star.speed; star.y += Math.sin(star.angle) * star.speed; star.alpha -= 0.015;
+                    if (star.alpha <= 0) { shootingStars.splice(i, 1); } else {
+                        ctx.beginPath();
+                        const gradient = ctx.createLinearGradient(star.x, star.y, star.x + Math.cos(star.angle) * star.len, star.y - Math.sin(star.angle) * star.len);
+                        gradient.addColorStop(0, `rgba(255, 255, 255, ${star.alpha})`); gradient.addColorStop(1, `rgba(167, 139, 250, 0)`);
+                        ctx.strokeStyle = gradient; ctx.lineWidth = 1.5; ctx.moveTo(star.x, star.y);
+                        ctx.lineTo(star.x + Math.cos(star.angle) * star.len, star.y - Math.sin(star.angle) * star.len); ctx.stroke();
+                    }
+                });
+                requestAnimationFrame(render);
+            };
+            render();
+        }
+
+        function initReveal() {
+            if (typeof IntersectionObserver === 'undefined') return;
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('active'); obs.unobserve(entry.target); }});
+            }, { root: null, rootMargin: '0px', threshold: 0.15 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }
+
+        function bootApplication() {
+            renderPageContent();
+            initNavbar();
+            initStarfield();    
+            initNetworkAnimation(); 
+            initZoomPan();
+            initCarouselDOM();
+            setTimeout(initReveal, 100);
+        }
+
+        if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', bootApplication); } 
+        else { bootApplication(); }
+
+    </script>
+</body>
+</html>
