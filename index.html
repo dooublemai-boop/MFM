@@ -108,7 +108,8 @@
                 <div class="lg:w-[55%] flex justify-center lg:justify-end items-center relative h-[380px] md:h-[550px] lg:h-[650px] w-full animate-hero-text" style="animation-delay: 0.4s;">
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 md:w-[400px] md:h-[400px] bg-gradient-to-tr from-indigo-500/15 to-purple-500/15 rounded-full filter blur-[60px] pointer-events-none"></div>
                     <div class="relative z-10 w-full h-full flex items-center justify-center animate-float-hero">
-                        <img id="hero-ip-img" src="" alt="个人配图" class="w-auto h-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-transform duration-500 ease-out interactive-element hover:scale-105">
+                        <!-- 优化：增加 fetchpriority="high" 和 decoding="sync" 确保主图最先加载 -->
+                        <img id="hero-ip-img" src="" alt="个人配图" fetchpriority="high" decoding="sync" class="w-auto h-full max-h-full object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)] transition-transform duration-500 ease-out interactive-element hover:scale-105">
                     </div>
                 </div>
             </div>
@@ -174,7 +175,8 @@
 
             <!-- 子模块 3：渲染单体作品 -->
             <div id="project-renders-header" class="reveal mb-12 flex flex-col items-center text-center relative z-20"></div>
-            <div id="renders-grid" class="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 relative z-20"></div>
+            <!-- 修复布局：将 columns-* 多列布局改为标准的 grid 网格布局 -->
+            <div id="renders-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 relative z-20"></div>
         </div>
     </section>
 
@@ -221,7 +223,8 @@
         <div id="lightbox-counter" class="fixed top-8 left-1/2 -translate-x-1/2 text-white/90 text-sm font-mono tracking-widest bg-black/60 px-5 py-2.5 rounded-full backdrop-blur-md border border-white/20 z-[110] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex items-center gap-4"></div>
 
         <div id="lightbox-zoom-wrapper" class="relative w-full h-full flex items-center justify-center overflow-hidden cursor-grab z-[105]">
-            <img id="lightbox-img" src="" class="max-w-[95vw] max-h-[90vh] object-contain shadow-[0_15px_60px_rgba(0,0,0,0.8)] rounded-md pointer-events-none" draggable="false">
+            <!-- 优化：Lightbox 的图片不做 lazy load，因为弹窗打开就要立马看 -->
+            <img id="lightbox-img" src="" decoding="async" class="max-w-[95vw] max-h-[90vh] object-contain shadow-[0_15px_60px_rgba(0,0,0,0.8)] rounded-md pointer-events-none" draggable="false">
         </div>
 
         <button id="lightbox-prev" onclick="navigateLightbox(-1, event)" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 hover:scale-110 p-4 rounded-full transition-all duration-300 backdrop-blur-md border border-white/10 shadow-2xl z-[110] interactive-element">
@@ -525,8 +528,9 @@
                     const tallIndex = p.images.length - 1;
 
                     const normalHtml = normalImages.map((imgUrl, i) => `
+                        <!-- 优化：增加 decoding="async" -->
                         <div class="relative w-full break-inside-avoid mb-2 sm:mb-2.5 rounded-md sm:rounded-lg overflow-hidden cursor-pointer group bg-[#111118] border border-white/5" onclick="openLightbox(${JSON.stringify(p.images).replace(/"/g, '&quot;')}, ${i})">
-                            <img src="${imgUrl}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
+                            <img src="${imgUrl}" decoding="async" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
                                 <span class="bg-black/70 p-2 sm:p-2.5 rounded-full text-white backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 transform scale-75 group-hover:scale-100 transition-transform duration-300"><i data-lucide="zoom-in" class="w-4 h-4 text-${p.tagTheme}-400"></i></span>
                             </div>
@@ -534,8 +538,9 @@
                     `).join('');
 
                     const tallHtml = `
+                        <!-- 优化：增加 decoding="async" -->
                         <div class="relative w-full rounded-md sm:rounded-lg overflow-hidden cursor-pointer group bg-[#111118] border border-white/5" onclick="openLightbox(${JSON.stringify(p.images).replace(/"/g, '&quot;')}, ${tallIndex})">
-                            <img src="${tallImage}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
+                            <img src="${tallImage}" decoding="async" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
                                 <span class="bg-black/70 p-2 sm:p-2.5 rounded-full text-white backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 transform scale-75 group-hover:scale-100 transition-transform duration-300"><i data-lucide="zoom-in" class="w-4 h-4 text-${p.tagTheme}-400"></i></span>
                             </div>
@@ -554,8 +559,9 @@
                     `;
                 } else {
                     const normalHtml = p.images.map((imgUrl, i) => `
+                        <!-- 优化：增加 decoding="async" -->
                         <div class="relative w-full break-inside-avoid mb-2 sm:mb-2.5 rounded-md sm:rounded-lg overflow-hidden cursor-pointer group bg-[#111118] border border-white/5" onclick="openLightbox(${JSON.stringify(p.images).replace(/"/g, '&quot;')}, ${i})">
-                            <img src="${imgUrl}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
+                            <img src="${imgUrl}" decoding="async" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.05] group-hover:opacity-80" loading="lazy">
                             <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
                                 <span class="bg-black/70 p-2 sm:p-2.5 rounded-full text-white backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.6)] border border-white/10 transform scale-75 group-hover:scale-100 transition-transform duration-300"><i data-lucide="zoom-in" class="w-4 h-4 text-${p.tagTheme}-400"></i></span>
                             </div>
@@ -593,10 +599,12 @@
             `;
             
             const allRendersArrStr = JSON.stringify(renders.images).replace(/"/g, '&quot;');
-            // 优化：修改了此处的悬浮图标，将 scan-line 替换为与上方一致的 zoom-in，保证整体设计的连贯性
+            
+            // 修复布局：去掉了外层元素的 break-inside-avoid 和 mb-4，适应 grid 布局
             document.getElementById('renders-grid').innerHTML = renders.images.map((imgUrl, i) => `
-                <div class="relative break-inside-avoid mb-4 rounded-xl overflow-hidden cursor-pointer group bg-[#111118] border border-white/5 reveal reveal-delay-${i % 3 + 1}" onclick="openLightbox(${allRendersArrStr}, ${i})">
-                    <img src="${imgUrl}" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03] group-hover:opacity-70" loading="lazy">
+                <div class="relative rounded-xl overflow-hidden cursor-pointer group bg-[#111118] border border-white/5 reveal reveal-delay-${i % 3 + 1}" onclick="openLightbox(${allRendersArrStr}, ${i})">
+                    <!-- 优化：增加 decoding="async" -->
+                    <img src="${imgUrl}" decoding="async" class="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.03] group-hover:opacity-70" loading="lazy">
                     <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-t from-[#030305]/80 via-transparent to-transparent">
                         <div class="bg-black/60 p-3.5 rounded-full text-white backdrop-blur-md shadow-[0_0_25px_rgba(0,0,0,0.8)] border border-white/10 transform scale-50 group-hover:scale-100 transition-transform duration-300 ease-out">
                             <i data-lucide="zoom-in" class="w-6 h-6 text-${renders.tagColor}-400"></i>
@@ -995,7 +1003,6 @@
                     y: Math.random() * h,
                     vx: (Math.random() - 0.5) * 0.6, 
                     vy: (Math.random() - 0.5) * 0.6,
-                    // 【修改位置】将点变大：增大了粒子的基础半径，从原本的 Math.random() * 1.5 + 0.5 调整为了更大的值
                     radius: Math.random() * 2.5 + 1.5
                 });
             }
@@ -1120,4 +1127,3 @@
 </body>
 
 </html>
-
